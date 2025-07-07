@@ -10,6 +10,8 @@ const todoForm = $(".todo-app-form");
 const titleInput = $("#taskTitle");
 const todoList = $("#todoList");
 const searchInput = $(".search-input");
+const activeBtn = $(".active-btn");
+const completedBtn = $(".completed-btn")
 
 // Khi người dùng gõ vào ô tìm kiếm
 searchInput.oninput = function (event) {
@@ -18,6 +20,56 @@ searchInput.oninput = function (event) {
 
 // Biến để theo dõi đang sửa task nào (null = không sửa)
 let editIndex = null;
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      completedBtn.classList.remove("active");
+      activeBtn.classList.remove("active");
+      renderTask();
+    }
+  });
+  
+  const filterCompletedTask = (button1, button2) => {
+    if (
+      button1.classList.contains("active") ||
+      button2.classList.contains("active")
+    ) {
+      button1.classList.remove("active");
+      button2.classList.remove("active");
+    }
+    const taskCards = $$(".task-card");
+    if (button1 === completedBtn && button2 === activeBtn) {
+      taskCards.forEach((task, index) => {
+        if (task.classList.contains("completed")) {
+          task.hidden = true;
+        } else {
+          task.hidden = false;
+        }
+      });
+    } else {
+      taskCards.forEach((task, index) => {
+        if (task.classList.contains("completed")) {
+          task.hidden = false;
+        } else {
+          task.hidden = true;
+        }
+      });
+    }
+  };
+  
+  completedBtn.onclick = (e) => {
+    filterCompletedTask(activeBtn, completedBtn);
+    if (e.target === completedBtn) {
+      completedBtn.classList.add("active");
+    }
+  };
+  
+  activeBtn.onclick = (e) => {
+    filterCompletedTask(completedBtn, activeBtn);
+    if (e.target === activeBtn) {
+      activeBtn.classList.add("active");
+    }
+  };
 
 // Hàm đóng form thêm/sửa task
 function closeForm() {
